@@ -20,6 +20,17 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddIdentityServer()
+    .AddAspNetIdentity<ApplicationUser>()
+    .AddConfigurationStore(configurationStoreOptions =>
+    {
+        configurationStoreOptions.ResolveDbContextOptions = ResolveDbContextOptions;
+    })
+    .AddOperationalStore(operationalStoreOptions =>
+    {
+        operationalStoreOptions.ResolveDbContextOptions = ResolveDbContextOptions;
+    });
+
 var app = builder.Build();
 
 app.Run();
@@ -27,4 +38,11 @@ app.Run();
 void NpgsqlOptionsAction(NpgsqlDbContextOptionsBuilder npgsqlDbContextOptionsBuilder)
 {
     npgsqlDbContextOptionsBuilder.MigrationsAssembly(typeof(Program).GetTypeInfo().Assembly.GetName().Name);
+}
+
+void ResolveDbContextOptions(IServiceProvider serviceProvider, DbContextOptionsBuilder dbContextOptionsBuilder)
+{
+    dbContextOptionsBuilder.UseNpgsql(
+        serviceProvider.GetRequiredService<IConfiguration>().GetConnectionString("IdentityServer"),
+        NpgsqlOptionsAction);
 }
