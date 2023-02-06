@@ -35,3 +35,8 @@ Desktop.ini
 .DS_Store
 
 *.json
+*.yml
+*.crt
+*.key
+*.pfx
+Dockerfile
