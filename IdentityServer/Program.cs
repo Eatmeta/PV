@@ -34,7 +34,21 @@ builder.Services.AddIdentityServer()
         operationalStoreOptions.ResolveDbContextOptions = ResolveDbContextOptions;
     });
 
+builder.Services.AddRazorPages();
+
 var app = builder.Build();
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseIdentityServer();
+
+app.UseAuthorization();
+
+app.MapRazorPages();
 
 if (app.Environment.IsDevelopment())
 {
