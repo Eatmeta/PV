@@ -1,7 +1,34 @@
+using System.Reflection;
+using Api;
+using Api.Data;
+using Api.Middleware;
+using Application;
+using Application.Common.Mappings;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<ExamplesDbContext>((serviceProvider, dbContextOptionsBuilder) =>
+{
+    dbContextOptionsBuilder.UseNpgsql(
+        serviceProvider.GetRequiredService<IConfiguration>().GetConnectionString("ExamplesApi"),
+        NpgsqlOptionsAction);
+});
+
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
+    config.AddProfile(new AssemblyMappingProfile(typeof(IExamplesDbContext).Assembly));
+});
+
+builder.Services.AddApplication();
+
+builder.Services.AddPersistence(builder.Configuration);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(jwtBearerOptions =>
@@ -38,42 +65,28 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(swaggerGenOptions =>
 {
-    swaggerGenOptions.SwaggerDoc("v1", new OpenApiInfo {Title = "API", Version = "v1"});
-
-    swaggerGenOptions.AddSecurityDefinition("oauth2",
-        new OpenApiSecurityScheme
-        {
-            Type = SecuritySchemeType.OAuth2,
-            Flows = new OpenApiOAuthFlows
-            {
-                ClientCredentials = new OpenApiOAuthFlow
-                {
-                    TokenUrl = new Uri($"{builder.Configuration["Authentication:Authority"]}/connect/token"),
-                    Scopes = {{"https://www.example.com/api", "API"}}
-                }
-            }
-        });
-
-    swaggerGenOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference {Type = ReferenceType.SecurityScheme, Id = "oauth2"}
-            },
-            new List<string> {"https://www.example.com/api"}
-        }
-    });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    swaggerGenOptions.IncludeXmlComments(xmlPath);
 });
+
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>>(x =>
+    new ConfigureSwaggerOptions($"{builder.Configuration["Authentication:Authority"]}"));
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseDeveloperExceptionPage();
     
+    app.UseSwagger();
+
     app.UseSwaggerUI();
 }
+
+app.UseCustomExceptionHandler();
+
+app.UseRouting();
 
 app.UseHttpsRedirection();
 
@@ -85,4 +98,22 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+using var scope = builder.Services.BuildServiceProvider().CreateScope();
+
+var serviceProvider = scope.ServiceProvider;
+try
+{
+    var context = serviceProvider.GetRequiredService<ExamplesDbContext>();
+    DbInitializer.Initialize(context);
+}
+catch (Exception exception)
+{
+    // ignored
+}
+
 app.Run();
+
+void NpgsqlOptionsAction(NpgsqlDbContextOptionsBuilder npgsqlDbContextOptionsBuilder)
+{
+    npgsqlDbContextOptionsBuilder.MigrationsAssembly(typeof(Program).GetTypeInfo().Assembly.GetName().Name);
+}
