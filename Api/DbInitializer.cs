@@ -1,4 +1,6 @@
-﻿namespace Persistence;
+﻿using Api.Data;
+
+namespace Api;
 
 public class DbInitializer
 {

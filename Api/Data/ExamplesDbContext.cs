@@ -1,15 +1,17 @@
-﻿using Application.Interfaces;
+﻿using Api.EntityTypeConfigurations;
+using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Persistence.EntityTypeConfigurations;
 using PhrasalVerb.Domain;
 
-namespace Persistence;
+namespace Api.Data;
 
 public class ExamplesDbContext : DbContext, IExamplesDbContext
 {
     public DbSet<Example> Examples { get; set; }
 
-    public ExamplesDbContext(DbContextOptions<ExamplesDbContext> options) : base(options) { }
+    public ExamplesDbContext(DbContextOptions<ExamplesDbContext> options) : base(options)
+    {
+    }
     
     protected override void OnModelCreating(ModelBuilder builder) 
     {

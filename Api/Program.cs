@@ -1,15 +1,24 @@
 using System.Reflection;
 using Api;
+using Api.Data;
 using Api.Middleware;
 using Application;
 using Application.Common.Mappings;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Persistence;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<ExamplesDbContext>((serviceProvider, dbContextOptionsBuilder) =>
+{
+    dbContextOptionsBuilder.UseNpgsql(
+        serviceProvider.GetRequiredService<IConfiguration>().GetConnectionString("ExamplesApi"),
+        NpgsqlOptionsAction);
+});
 
 builder.Services.AddAutoMapper(config =>
 {
@@ -89,18 +98,22 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+using var scope = builder.Services.BuildServiceProvider().CreateScope();
+
+var serviceProvider = scope.ServiceProvider;
+try
 {
-    var serviceProvider = scope.ServiceProvider;
-    try
-    {
-        var context = serviceProvider.GetRequiredService<ExamplesDbContext>();
-        DbInitializer.Initialize(context);
-    }
-    catch (Exception exception)
-    {
-        // ignored
-    }
+    var context = serviceProvider.GetRequiredService<ExamplesDbContext>();
+    DbInitializer.Initialize(context);
+}
+catch (Exception exception)
+{
+    // ignored
 }
 
 app.Run();
+
+void NpgsqlOptionsAction(NpgsqlDbContextOptionsBuilder npgsqlDbContextOptionsBuilder)
+{
+    npgsqlDbContextOptionsBuilder.MigrationsAssembly(typeof(Program).GetTypeInfo().Assembly.GetName().Name);
+}
