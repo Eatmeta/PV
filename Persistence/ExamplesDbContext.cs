@@ -1,9 +1,9 @@
-﻿using Api.EntityTypeConfigurations;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Persistence.EntityTypeConfigurations;
 using PhrasalVerb.Domain;
 
-namespace Api.Data;
+namespace Persistence;
 
 public class ExamplesDbContext : DbContext, IExamplesDbContext
 {
@@ -12,10 +12,11 @@ public class ExamplesDbContext : DbContext, IExamplesDbContext
     public ExamplesDbContext(DbContextOptions<ExamplesDbContext> options) : base(options)
     {
     }
-    
-    protected override void OnModelCreating(ModelBuilder builder) 
+
+    protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new ExampleConfiguration());
         base.OnModelCreating(builder);
+        //new DbInitializer(builder).Seed();
     }
 }

@@ -3,6 +3,6 @@ using MediatR;
 
 namespace Application.Examples.Queries.GetRandomExampleDetails;
 
-public class GetRandomExampleDetailsQuery : IRequest<ExampleDetailsVm>
+public class GetRandomExampleDetailsQuery : IRequest<ExampleDetailsDto>
 {
 }

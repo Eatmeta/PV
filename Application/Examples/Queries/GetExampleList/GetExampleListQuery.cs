@@ -2,6 +2,6 @@
 
 namespace Application.Examples.Queries.GetExampleList;
 
-public class GetExampleListQuery : IRequest<ExampleListVm>
+public class GetExampleListQuery : IRequest<ExampleListDto>
 {
 }
