@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PhrasalVerb.Domain;
 
-namespace Api.EntityTypeConfigurations;
+namespace Persistence.EntityTypeConfigurations;
 
 public class ExampleConfiguration : IEntityTypeConfiguration<Example>
 {

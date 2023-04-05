@@ -2,7 +2,7 @@
 
 namespace Application.Examples.Queries.GetExampleDetails;
 
-public class GetExampleDetailsQuery : IRequest<ExampleDetailsVm>
+public class GetExampleDetailsQuery : IRequest<ExampleDetailsDto>
 {
-    public long Id { get; set; }
+    public Guid Id { get; init; }
 }

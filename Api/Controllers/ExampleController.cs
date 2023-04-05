@@ -3,7 +3,6 @@ using Application.Examples.Queries.GetExampleList;
 using Application.Examples.Queries.GetFourRandomExampleDetails;
 using Application.Examples.Queries.GetRandomExampleDetails;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -16,50 +15,50 @@ public class ExampleController : BaseController
     public ExampleController(IMapper mapper) => _mapper = mapper;
 
     [HttpGet("GetListOfExamples")]
-    [Authorize]
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ExampleListVm>> GetAll()
+    public async Task<ActionResult<ExampleListDto>> GetAll()
     {
         var query = new GetExampleListQuery();
-        var vm = await Mediator.Send(query);
-        return Ok(vm);
+        var dto = await Mediator.Send(query);
+        return Ok(dto);
     }
 
-    [HttpGet("GetExampleDetails/{id:long}")]
-    [Authorize]
+    [HttpGet("GetExampleDetails/{id:guid}")]
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ExampleDetailsVm>> Get(long id)
+    public async Task<ActionResult<ExampleDetailsDto>> Get(Guid id)
     {
         var query = new GetExampleDetailsQuery
         {
             Id = id
         };
 
-        var vm = await Mediator.Send(query);
-        return Ok(vm);
+        var dto = await Mediator.Send(query);
+        return Ok(dto);
     }
 
     [HttpGet("GetRandomExampleDetails")]
-    [Authorize]
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ExampleDetailsVm>> GetRandom()
+    public async Task<ActionResult<ExampleDetailsDto>> GetRandom()
     {
         var query = new GetRandomExampleDetailsQuery();
-        var vm = await Mediator.Send(query);
-        return Ok(vm);
+        var dto = await Mediator.Send(query);
+        return Ok(dto);
     }
     
     [HttpGet("GetFourRandomExampleDetails")]
-    [Authorize]
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<FourExamplesVm>> GetRandomFour()
+    public async Task<ActionResult<ExampleListDto>> GetRandomFour()
     {
         var query = new GetFourRandomExampleDetailsQuery();
-        var vm = await Mediator.Send(query);
-        return Ok(vm);
+        var dto = await Mediator.Send(query);
+        return Ok(dto);
     }
 }

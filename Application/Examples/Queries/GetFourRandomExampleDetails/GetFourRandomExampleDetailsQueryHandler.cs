@@ -1,4 +1,6 @@
 ﻿using Application.Common.Exceptions;
+using Application.Examples.Queries.GetExampleDetails;
+using Application.Examples.Queries.GetExampleList;
 using Application.Interfaces;
 using AutoMapper;
 using MediatR;
@@ -7,7 +9,7 @@ using PhrasalVerb.Domain;
 
 namespace Application.Examples.Queries.GetFourRandomExampleDetails;
 
-public class GetFourRandomExampleDetailsQueryHandler : IRequestHandler<GetFourRandomExampleDetailsQuery, FourExamplesVm>
+public class GetFourRandomExampleDetailsQueryHandler : IRequestHandler<GetFourRandomExampleDetailsQuery, ExampleListDto>
 {
     private readonly IExamplesDbContext _dbContext;
     private readonly IMapper _mapper;
@@ -15,31 +17,30 @@ public class GetFourRandomExampleDetailsQueryHandler : IRequestHandler<GetFourRa
     public GetFourRandomExampleDetailsQueryHandler(IExamplesDbContext dbContext, IMapper mapper)
         => (_dbContext, _mapper) = (dbContext, mapper);
 
-    public async Task<FourExamplesVm> Handle(GetFourRandomExampleDetailsQuery request,
+    public async Task<ExampleListDto> Handle(GetFourRandomExampleDetailsQuery request,
         CancellationToken cancellationToken)
     {
-        var result = new List<Example>();
-        var usedIds = new List<long>();
-        var maxIndex = _dbContext.Examples.CountAsync(cancellationToken);
+        var result = new List<ExampleDetailsDto>();
+        var usedIds = new List<Guid>();
+        var maxIndex = await _dbContext.Examples.CountAsync(cancellationToken);
+        var random = new Random();
 
-        for (var i = 0; i < 4; i++)
+        while (result.Count != 4)
         {
-            var randomId = new Random().NextInt64(1, maxIndex.Result + 1);
+            var randomId = random.Next(0, maxIndex);
+            var entity = await _dbContext.Examples.Skip(randomId).Take(1)
+                .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+            
+            if (entity == null)
+                throw new NotFoundException(nameof(Example), randomId);
+            
+            var dto = _mapper.Map<ExampleDetailsDto>(entity);
 
-            if (!usedIds.Contains(randomId))
-            {
-                usedIds.Add(randomId);
-                var entity = await _dbContext.Examples
-                    .FirstOrDefaultAsync(example => example.ExampleId.ToString() == randomId.ToString(), cancellationToken);
-                
-                if (entity == null || entity.ExampleId.ToString() != randomId.ToString())
-                    throw new NotFoundException(nameof(Example), randomId);
-                
-                result.Add(entity);
-                continue;
-            }
-            i--;
+            if (usedIds.Contains(dto.ExampleId)) continue;
+
+            usedIds.Add(dto.ExampleId);
+            result.Add(dto);
         }
-        return new FourExamplesVm {Examples = result};
+        return new ExampleListDto {Examples = result};
     }
 }

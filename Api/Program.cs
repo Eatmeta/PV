@@ -1,24 +1,15 @@
 using System.Reflection;
 using Api;
-using Api.Data;
 using Api.Middleware;
 using Application;
 using Application.Common.Mappings;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddDbContext<ExamplesDbContext>((serviceProvider, dbContextOptionsBuilder) =>
-{
-    dbContextOptionsBuilder.UseNpgsql(
-        serviceProvider.GetRequiredService<IConfiguration>().GetConnectionString("ExamplesApi"),
-        NpgsqlOptionsAction);
-});
 
 builder.Services.AddAutoMapper(config =>
 {
@@ -28,7 +19,7 @@ builder.Services.AddAutoMapper(config =>
 
 builder.Services.AddApplication();
 
-builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddPersistence();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(jwtBearerOptions =>
@@ -78,7 +69,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    
+
     app.UseSwagger();
 
     app.UseSwaggerUI();
@@ -98,7 +89,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using var scope = builder.Services.BuildServiceProvider().CreateScope();
+/*using var scope = builder.Services.BuildServiceProvider().CreateScope();
 
 var serviceProvider = scope.ServiceProvider;
 try
@@ -109,11 +100,11 @@ try
 catch (Exception exception)
 {
     // ignored
-}
+}*/
 
 app.Run();
 
-void NpgsqlOptionsAction(NpgsqlDbContextOptionsBuilder npgsqlDbContextOptionsBuilder)
+/*void NpgsqlOptionsAction(NpgsqlDbContextOptionsBuilder npgsqlDbContextOptionsBuilder)
 {
     npgsqlDbContextOptionsBuilder.MigrationsAssembly(typeof(Program).GetTypeInfo().Assembly.GetName().Name);
-}
+}*/
