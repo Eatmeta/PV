@@ -116,8 +116,8 @@ if (app.Environment.IsDevelopment())
                 ClientName = "Web Application",
                 AllowedGrantTypes = GrantTypes.Code,
                 AllowedScopes = new List<string> {"openid", "profile", "email", "https://www.example.com/api"},
-                RedirectUris = new List<string> {"https://webapplication:7002/signin-oidc"},
-                PostLogoutRedirectUris = new List<string> {"https://webapplication:7002/signout-callback-oidc"}
+                RedirectUris = new List<string> {"https://blazorserver:7002/signin-oidc"},
+                PostLogoutRedirectUris = new List<string> {"https://blazorserver:7002/signout-callback-oidc"}
             }.ToEntity(),
             new Client
             {

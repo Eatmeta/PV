@@ -3,6 +3,7 @@ using Application.Examples.Queries.GetExampleList;
 using Application.Examples.Queries.GetFourRandomExampleDetails;
 using Application.Examples.Queries.GetRandomExampleDetails;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -15,7 +16,7 @@ public class ExampleController : BaseController
     public ExampleController(IMapper mapper) => _mapper = mapper;
 
     [HttpGet("GetListOfExamples")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ExampleListDto>> GetAll()
@@ -26,7 +27,7 @@ public class ExampleController : BaseController
     }
 
     [HttpGet("GetExampleDetails/{id:guid}")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ExampleDetailsDto>> Get(Guid id)
@@ -41,7 +42,7 @@ public class ExampleController : BaseController
     }
 
     [HttpGet("GetRandomExampleDetails")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ExampleDetailsDto>> GetRandom()
@@ -52,7 +53,7 @@ public class ExampleController : BaseController
     }
     
     [HttpGet("GetFourRandomExampleDetails")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ExampleListDto>> GetRandomFour()
