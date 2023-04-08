@@ -20,7 +20,7 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
             new OpenApiInfo
             {
                 Title = $"PhrasalVerb API",
-                Description = "PhrasalVerb Api for PhrasalVerb Game",
+                Description = "PhrasalVerb Api for PhrasalVerb Game   e96e57fe-8ecb-4d9a-8168-e286d0d5df8b",
                 Contact = new OpenApiContact
                 {
                     Name = "Eatmeta",

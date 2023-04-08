@@ -1,10 +1,10 @@
 using BlazorServerApp.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*
 builder.Services.AddAuthentication(authenticationOptions =>
     {
         authenticationOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -21,15 +21,14 @@ builder.Services.AddAuthentication(authenticationOptions =>
         openIdConnectOptions.Scope.Add("https://www.example.com/api");
         openIdConnectOptions.SaveTokens = true;
     });
-
 builder.Services.AddAuthorization();
-*/
 
 builder.Services.AddHttpClient();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+IdentityModelEventSource.ShowPII = true;
 
 var app = builder.Build();
 
@@ -46,9 +45,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-//app.UseAuthentication();
+app.UseAuthentication();
 
-//app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

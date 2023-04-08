@@ -6,6 +6,7 @@ using Application.Common.Mappings;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Persistence;
 
@@ -63,6 +64,8 @@ builder.Services.AddSwaggerGen(swaggerGenOptions =>
 
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>>(x =>
     new ConfigureSwaggerOptions($"{builder.Configuration["Authentication:Authority"]}"));
+
+IdentityModelEventSource.ShowPII = true;
 
 var app = builder.Build();
 
