@@ -7,6 +7,7 @@ using IdentityServer.Factories;
 using IdentityServer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,8 @@ builder.Services.AddIdentityServer()
     });
 
 builder.Services.AddRazorPages();
+
+IdentityModelEventSource.ShowPII = true;
 
 var app = builder.Build();
 
@@ -78,7 +81,7 @@ if (app.Environment.IsDevelopment())
     {
         await configurationDbContext.ApiResources.AddAsync(new ApiResource
         {
-            Name = Guid.NewGuid().ToString(),
+            Name = Guid.Parse("946bdf76-f6c4-4404-babd-c75414cbbed7").ToString(),
             DisplayName = "API",
             Scopes = new List<string> {"https://www.example.com/api"}
         }.ToEntity());
@@ -102,7 +105,7 @@ if (app.Environment.IsDevelopment())
         await configurationDbContext.Clients.AddRangeAsync(
             new Client
             {
-                ClientId = Guid.NewGuid().ToString(),
+                ClientId = Guid.Parse("e96e57fe-8ecb-4d9a-8168-e286d0d5df8b").ToString(),
                 ClientSecrets = new List<Secret> {new("secret".Sha512())},
                 ClientName = "Console Application",
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
@@ -111,7 +114,7 @@ if (app.Environment.IsDevelopment())
             }.ToEntity(),
             new Client
             {
-                ClientId = Guid.NewGuid().ToString(),
+                ClientId = Guid.Parse("1ecb3a93-3695-4652-a83a-5a536ef3f4fd").ToString(),
                 ClientSecrets = new List<Secret> {new("secret".Sha512())},
                 ClientName = "Web Application",
                 AllowedGrantTypes = GrantTypes.Code,
@@ -121,7 +124,7 @@ if (app.Environment.IsDevelopment())
             }.ToEntity(),
             new Client
             {
-                ClientId = Guid.NewGuid().ToString(),
+                ClientId = Guid.Parse("03037fa7-c389-4ece-8efc-ca23298028db").ToString(),
                 RequireClientSecret = false,
                 ClientName = "Single Page Application",
                 AllowedGrantTypes = GrantTypes.Code,
