@@ -13018,7 +13018,7 @@ namespace Persistence.Migrations
                         {
                             ExampleId = new Guid("ea41e9e0-b456-4260-b6bd-3c0358cae322"),
                             ExampleFull = "If I don't GET IT TOGETHER, I will never reach my targets.",
-                            ExampleFullUnderscore = "If I don't ___ __ TO___HER, I will never reach my targets.",
+                            ExampleFullUnderscore = "If I don't ___ __ ________, I will never reach my targets.",
                             ExampleParticle = "IT TOGETHER",
                             ExampleVerb = "GET",
                             Meaning = "Control things in your life to achieve your aims.",
@@ -13029,7 +13029,7 @@ namespace Persistence.Migrations
                         {
                             ExampleId = new Guid("687ac7f0-992f-4dfb-a801-386b844a2a6e"),
                             ExampleFull = "They only GET IT TOGETHER at the very end of the film.",
-                            ExampleFullUnderscore = "They only ___ __ TO___HER at the very end of the film.",
+                            ExampleFullUnderscore = "They only ___ __ ________ at the very end of the film.",
                             ExampleParticle = "IT TOGETHER",
                             ExampleVerb = "GET",
                             Meaning = "Begin a relationship.",

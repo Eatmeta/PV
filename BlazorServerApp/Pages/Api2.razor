@@ -1,198 +1,55 @@
 ﻿@page "/api2"
-@using PhrasalVerb.Domain
-@using Microsoft.AspNetCore.Mvc.RazorPages
-@using Microsoft.AspNetCore.Components
+@inherits Api2Base
+
+@if (ErrorMessage != null)
+{
+    <DisplayError ErrorMessage="@ErrorMessage"></DisplayError>
+}
 
 <EditForm Model="inputLetters" OnValidSubmit="CheckExample">
 
     <div class="form-group">
         <label for="name">Поле-помощник</label>
-        <input id="name"
-               class="form-control"
-               @ref="@invisibleInput"
-               @onfocusin="() => HandleFocusIn(0)">
+        <input id="name"@ref="@invisibleInput">
     </div>
 
     <br/>
     <button type="submit" class="btn btn-primary">Check</button>
 </EditForm>
+
 <br/>
 @result
 <br/>
+@Answer
+<br/>
 
 <div class="zzz" style="font-size: 2.5rem">
-@{
-    var counter = 0;
+    @{
+        var counter = 0;
 
-    @for (var j = 0; j < SentenceList.Count; j++)
-    {
-        @SentenceList[j]
+        @for (var j = 0; j < SentenceList.Count; j++)
+        {
+            @SentenceList[j]
 
-        if (j == 0)
-        {
-            @foreach (var i in Enumerable.Range(0, AnswerList[j].Length))
+            if (j < AnswerList.Count)
             {
-                var local = i;
-                <input type="text"
-                       class="xxx"
-                       maxlength="1"
-                       display="inline-block"
-                       max-width="1ch"
-                       @bind="inputLetters[local]"
-                       @ref="inputRefs[local]"
-                       @onkeydown="e => { HandleKeyDown(local, e); }"
-                       @oninput="e => { HandleInput(local, e); }"
-                       @onfocusin="() => HandleFocusIn(local)">
+                <text>&nbsp;</text>
+                @foreach (var i in Enumerable.Range(0, AnswerList[j].Length))
+                {
+                    var local = counter + i;
+                    <input type="text"
+                           class="xxx"
+                           maxlength="1"
+                           display="inline-block"
+                           max-width="1ch"
+                           @bind="inputLetters[local]"
+                           @ref="inputRefs[local]"
+                           @onkeydown="e => { HandleKeyDown(local, e); }"
+                           @oninput="e => { HandleInput(local, e); }"
+                           @onfocusin="() => HandleFocusIn(local)">
+                }
+                counter += AnswerList[j].Length;
             }
-            counter += AnswerList[j].Length;
-        }
-        else if (j % 2 == 0)
-        {
-            @foreach (var i in Enumerable.Range(0, AnswerList[j - 1].Length))
-            {
-                var local = counter + i;
-                <input type="text"
-                       class="xxx"
-                       maxlength="1"
-                       display="inline-block"
-                       max-width="1ch"
-                       @bind="inputLetters[local]"
-                       @ref="inputRefs[local]"
-                       @onkeydown="e => { HandleKeyDown(local, e); }"
-                       @oninput="e => { HandleInput(local, e); }"
-                       @onfocusin="() => HandleFocusIn(local)">
-            }
-            counter += AnswerList[j - 1].Length;
         }
     }
-}
 </div>
-
-@code {
-    public string Answer { get; set; } = string.Empty;
-    public List<string> AnswerList { get; set; } = new List<string>();
-    public List<string> SentenceList { get; set; } = new List<string>();
-    public bool result;
-    public ElementReference[] inputRefs;
-    public string[] inputLetters;
-    public ElementReference invisibleInput;
-
-    public static Example? Example { get; set; } = new Example
-    {
-        ExampleFull = "We have to ABIDE BY what the court says.",
-        ExampleFullUnderscore = "We have to _____ __ what the court says.",
-        ExampleId = Guid.NewGuid(),
-        ExampleParticle = "BY",
-        ExampleVerb = "ABIDE",
-        Meaning = "Accept or follow a decision or rule.",
-        Verb = "Abide",
-        VerbAndParticle = "Abide by"
-    };
-
-    protected override void OnInitialized()
-    {
-        Answer = Example.ExampleVerb + " " + Example.ExampleParticle;
-        var tempAnswer = Example.ExampleFull;
-        AnswerList = Answer.Split(" ").ToList();
-        var temp = new List<string>();
-        foreach (var item in AnswerList)
-        {
-            temp = tempAnswer.Split(item).ToList();
-            SentenceList.Add(temp[0]);
-            tempAnswer = string.Join("", temp[1]);
-        }
-        SentenceList.Add(temp[0]);
-        SentenceList.Add(temp[1]);
-
-        var letterCount = AnswerList.Sum(str => str.Length);
-        inputRefs = new ElementReference[letterCount];
-        inputLetters = new string[inputRefs.Length];
-    }
-
-
-    private void CheckExample()
-    {
-        result = string.Join("", inputLetters).Equals(string.Join("", AnswerList), StringComparison.InvariantCultureIgnoreCase);
-    }
-
-
-    private void HandleInput(int index, ChangeEventArgs e)
-    {
-        var key = e.Value?.ToString();
-
-        if (key == "")
-        {
-            invisibleInput.FocusAsync();
-            inputRefs[index].FocusAsync();
-            return;
-        }
-
-        if (index + 1 < inputRefs.Length)
-        {
-            inputRefs[index + 1].FocusAsync();
-        }
-        else
-        {
-            invisibleInput.FocusAsync();
-            inputRefs[index].FocusAsync();
-        }
-    }
-
-    private void HandleKeyDown(int index, KeyboardEventArgs e)
-    {
-        switch (e.Key)
-        {
-            case "ArrowLeft" when index - 1 >= 0:
-                inputRefs[index - 1].FocusAsync();
-                break;
-            case "ArrowRight" when index + 1 < inputRefs.Length:
-                inputRefs[index + 1].FocusAsync();
-                break;
-            case "Backspace" when string.IsNullOrEmpty(inputLetters[index]) && index - 1 >= 0:
-                inputRefs[index - 1].FocusAsync();
-                break;
-        }
-    }
-
-    [Inject]
-    private IJSRuntime JSRuntime { get; set; }
-
-    private async Task HandleFocusIn(int index)
-    {
-        await JSRuntime.InvokeVoidAsync("eval", @"
-            function setTextSelection(element, start, end) {
-                element.setSelectionRange(start, end);
-            }
-        ");
-
-        await JSRuntime.InvokeVoidAsync("setTextSelection", inputRefs[index], 0, -1);
-    }
-
-}
-
-@code {
-
-    public class ApiModel : PageModel
-    {
-        public ApiModel(IHttpClientFactory httpClientFactory)
-        {
-            HttpClientFactory = httpClientFactory;
-        }
-
-
-        private IHttpClientFactory HttpClientFactory { get; }
-
-        public async Task OnGetAsync()
-        {
-            using var httpClient = HttpClientFactory.CreateClient();
-
-    /*httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", await HttpContext.GetTokenAsync("access_token"));
-
-        var fromDb = await httpClient.GetStringAsync("https://api:7001/api/Example/GetRandomExampleDetails");
-
-        Example = JsonSerializer.Deserialize<Example>(fromDb);*/
-        }
-    }
-
-}

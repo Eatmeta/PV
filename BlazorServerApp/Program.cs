@@ -1,9 +1,12 @@
 using BlazorServerApp.Data;
+using BlazorServerApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IExampleDetailsService, ExampleDetailsService>();
 
 builder.Services.AddAuthentication(authenticationOptions =>
     {
@@ -24,6 +27,7 @@ builder.Services.AddAuthentication(authenticationOptions =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();

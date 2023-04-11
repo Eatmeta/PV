@@ -1,11 +1,87 @@
 ﻿@page
+@using Microsoft.AspNetCore.Components.Web
 @model BlazorServerApp.Pages.ApiModel
+@using System.Net.Http.Headers;
+@using Application.Examples.Queries.GetExampleDetails;
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.AspNetCore.Mvc.RazorPages;
+@using Microsoft.JSInterop;
+@using Newtonsoft.Json;
 
 @{
     ViewData["Title"] = "API";
 }
 
-<pre><code>@Model.Example.ExampleFullUnderscore</code></pre>
+<code>
+    @Model.Example.ExampleFullUnderscore
+    <br/>
+    @Model.Answer
 
+    <EditForm Model="inputLetters" OnValidSubmit="CheckExample">
 
+        <div class="form-group">
+            <label for="name">Поле-помощник</label>
+            <input id="name"
+                   class="form-control"
+                   ref="@Model.invisibleInput"
+                   onfocusin="@Model.HandleFocusIn(0)">
+        </div>
 
+        <br/>
+        <button type="submit" class="btn btn-primary">Check</button>
+    </EditForm>
+    <br/>
+    @Model.result
+    <br/>
+
+    <div class="zzz" style="font-size: 2.5rem">
+        @{
+            var counter = 0;
+
+            @for (var j = 0; j < Model.SentenceList.Count; j++)
+            {
+                @Model.SentenceList[j]
+
+                if (j == 0)
+                {
+                    @foreach (var i in Enumerable.Range(0, Model.AnswerList[j].Length))
+                    {
+                        var local = i;
+                        <input type="text"
+                               class="xxx"
+                               maxlength="1"
+                               display="inline-block"
+                               max-width="1ch"
+                               bind="@Model.inputLetters[local]"
+                               ref="@Model.inputRefs[local]"
+                               onkeydown="@(new Action<object>(e => { @Model.HandleKeyDown(local, e as KeyboardEventArgs); }))"
+                               oninput="@(new Action<object>(e => { Model.HandleInput(local, e as ChangeEventArgs); }))"
+                               onfocusin="@Model.HandleFocusIn(local)">
+                    }
+                    counter += Model.AnswerList[j].Length;
+                }
+                else if (j % 2 == 0)
+                {
+                    @foreach (var i in Enumerable.Range(0, Model.AnswerList[j - 1].Length))
+                    {
+                        var local = counter + i;
+                        <input type="text"
+                               class="xxx"
+                               maxlength="1"
+                               display="inline-block"
+                               max-width="1ch"
+                               bind="@Model.inputLetters[local]"
+                               ref="@Model.inputRefs[local]"
+                               onkeydown="@(new Action<object>(e => { @Model.HandleKeyDown(local, e as KeyboardEventArgs); }))"
+                               oninput="@(new Action<object>(e => { Model.HandleInput(local, e as ChangeEventArgs); }))"
+                               onfocusin="@Model.HandleFocusIn(local)">
+                    }
+                    counter += Model.AnswerList[j - 1].Length;
+                }
+            }
+        }
+    </div>
+</code>

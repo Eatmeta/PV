@@ -13142,7 +13142,7 @@ public class DbInitializer
             example.HasData(new Example
             {
                 ExampleFull = "If I don't GET IT TOGETHER, I will never reach my targets.",
-                ExampleFullUnderscore = "If I don't ___ __ TO___HER, I will never reach my targets.",
+                ExampleFullUnderscore = "If I don't ___ __ ________, I will never reach my targets.",
                 ExampleId = Guid.NewGuid(),
                 ExampleParticle = "IT TOGETHER",
                 ExampleVerb = "GET",
@@ -13153,7 +13153,7 @@ public class DbInitializer
             example.HasData(new Example
             {
                 ExampleFull = "They only GET IT TOGETHER at the very end of the film.",
-                ExampleFullUnderscore = "They only ___ __ TO___HER at the very end of the film.",
+                ExampleFullUnderscore = "They only ___ __ ________ at the very end of the film.",
                 ExampleId = Guid.NewGuid(),
                 ExampleParticle = "IT TOGETHER",
                 ExampleVerb = "GET",
