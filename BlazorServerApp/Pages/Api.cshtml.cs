@@ -103,7 +103,6 @@ public class ApiModel : PageModel
         }
     }
 
-
     public async Task HandleFocusIn(int index)
     {
         await JsRuntime.InvokeVoidAsync("eval", @"
