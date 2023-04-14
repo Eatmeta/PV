@@ -8,7 +8,7 @@ using Microsoft.JSInterop;
 namespace BlazorServerApp.Pages;
 
 [Authorize]
-public class Api2Base : ComponentBase
+public class PlayGameBase : ComponentBase
 {
     public string Answer { get; set; } = string.Empty;
     public List<string> AnswerList { get; set; } = new();
@@ -19,17 +19,17 @@ public class Api2Base : ComponentBase
     public ElementReference invisibleInput;
     [Inject] public IExampleDetailsService ExampleDetailsService { get; set; }
     public string ErrorMessage { get; set; }
-
+    
     public static ExampleDetailsDto? Example { get; set; } = new ExampleDetailsDto
     {
-        ExampleFull = "If I don't GET IT TOGETHER, I will never reach my targets.",
-        ExampleFullUnderscore = "If I don't ___ __ ________, I will never reach my targets.",
+        ExampleFull = "I DRIED the dishes UP.",
+        ExampleFullUnderscore = "I _____ the dishes __.",
         ExampleId = Guid.NewGuid(),
-        ExampleParticle = "IT TOGETHER",
-        ExampleVerb = "GET",
-        Meaning = "Control things in your life to achieve your aims.",
-        Verb = "Get",
-        VerbAndParticle = "Get it together"
+        ExampleParticle = "UP",
+        ExampleVerb = "DRIED",
+        Meaning = "Dry plates, dishes, cutlery, etc, after washing them up.",
+        Verb = "Dry",
+        VerbAndParticle = "Dry up"
     };
 
     protected override async Task OnInitializedAsync()
@@ -37,29 +37,29 @@ public class Api2Base : ComponentBase
         try
         {
             Example = await ExampleDetailsService.GetRandomExampleDetails();
-            
-            Answer = Example.ExampleVerb + " " + Example.ExampleParticle;
-            var tempAnswer = Example.ExampleFull;
-            AnswerList = Answer.Split(" ").ToList();
-            
-            var temp = new List<string>();
-            foreach (var item in AnswerList)
-            {
-                temp = tempAnswer.Split(" " + item).ToList();
-                SentenceList.Add(temp[0]);
-                tempAnswer = string.Join("", temp[1]);
-            }
-            SentenceList.Add(temp[0]);
-            SentenceList.Add(temp[1]);
-
-            var letterCount = AnswerList.Sum(str => str.Length);
-            inputRefs = new ElementReference[letterCount];
-            inputLetters = new string[letterCount];
         }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message + Example.ExampleFull;
+            ErrorMessage = ex.Message;
         }
+        
+        Answer = Example.ExampleVerb + " " + Example.ExampleParticle;
+        var tempAnswer = Example.ExampleFull;
+        AnswerList = Answer.Split(" ").ToList();
+            
+        var temp = new List<string>();
+        foreach (var item in AnswerList)
+        {
+            temp = tempAnswer.Split(" " + item).ToList();
+            SentenceList.Add(temp[0]);
+            tempAnswer = string.Join("", temp[1]);
+        }
+        SentenceList.Add(tempAnswer);
+        //SentenceList.Add(temp[1]);
+
+        var letterCount = AnswerList.Sum(str => str.Length);
+        inputRefs = new ElementReference[letterCount];
+        inputLetters = new string[letterCount];
     }
 
     public void CheckExample()

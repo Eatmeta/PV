@@ -6,6 +6,10 @@ using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: false);
+
 builder.Services.AddScoped<IExampleDetailsService, ExampleDetailsService>();
 
 builder.Services.AddAuthentication(authenticationOptions =>
@@ -32,6 +36,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+
 IdentityModelEventSource.ShowPII = true;
 
 var app = builder.Build();

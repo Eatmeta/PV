@@ -1,9 +1,11 @@
 ﻿using System.Net.Http.Headers;
 using Application.Examples.Queries.GetExampleDetails;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorServerApp.Services;
 
+[Authorize]
 public class ExampleDetailsService : IExampleDetailsService
 {
     private IHttpClientFactory HttpClientFactory { get; }

@@ -1,15 +1,8 @@
 ﻿@page
+@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
+
 @model BlazorServerApp.Pages.ApiModel
-@using System.Net.Http.Headers;
-@using Application.Examples.Queries.GetExampleDetails;
-@using Microsoft.AspNetCore.Authentication;
-@using Microsoft.AspNetCore.Authorization;
-@using Microsoft.AspNetCore.Components;
-@using Microsoft.AspNetCore.Components.Web;
-@using Microsoft.AspNetCore.Mvc.RazorPages;
-@using Microsoft.JSInterop;
-@using Newtonsoft.Json;
 
 @{
     ViewData["Title"] = "API";
@@ -84,4 +77,5 @@
             }
         }
     </div>
+    <a href="playgame" class="button-css">Play Game></a>
 </code>

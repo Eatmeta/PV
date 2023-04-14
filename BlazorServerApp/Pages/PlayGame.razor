@@ -1,5 +1,6 @@
-﻿@page "/api2"
-@inherits Api2Base
+﻿@page "/playgame"
+@inherits PlayGameBase
+@attribute [Authorize]
 
 @if (ErrorMessage != null)
 {
@@ -22,8 +23,12 @@
 <br/>
 @Answer
 <br/>
+@Example.ExampleFull
+<br/>
 
 <div class="zzz" style="font-size: 2.5rem">
+    @Example.ExampleFull
+    <br/>
     @{
         var counter = 0;
 
