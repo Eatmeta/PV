@@ -4378,7 +4378,7 @@ public class DbInitializer
             });
             example.HasData(new Example
             {
-                ExampleFull = "I'm too tired to cook - let's get a CARRY-OUT.",
+                ExampleFull = "I'm too tired to cook - let's get a CARRY - OUT.",
                 ExampleFullUnderscore = "I'm too tired to cook - let's get a _____-___.",
                 ExampleId = Guid.NewGuid(),
                 ExampleParticle = "OUT",
@@ -9127,7 +9127,7 @@ public class DbInitializer
             });
             example.HasData(new Example
             {
-                ExampleFull = "He was killed in a DRIVE-BY shooting.",
+                ExampleFull = "He was killed in a DRIVE - BY shooting.",
                 ExampleFullUnderscore = "He was killed in a _____-__ shooting.",
                 ExampleId = Guid.NewGuid(),
                 ExampleParticle = "BY",
@@ -15638,10 +15638,10 @@ public class DbInitializer
             });
             example.HasData(new Example
             {
-                ExampleFull = "He WENT ON and ON talking and I was so bored.",
+                ExampleFull = "He WENT ON talking and I was so bored.",
                 ExampleFullUnderscore = "He ____ __ talking and I was so bored.",
                 ExampleId = Guid.NewGuid(),
-                ExampleParticle = "ON ON",
+                ExampleParticle = "ON",
                 ExampleVerb = "WENT",
                 Meaning = "Continue.",
                 Verb = "Go",
@@ -20275,7 +20275,7 @@ public class DbInitializer
             });
             example.HasData(new Example
             {
-                ExampleFull = "5-4-3-2-1- we have LIFT-OFF!",
+                ExampleFull = "5-4-3-2-1- we have LIFT - OFF!",
                 ExampleFullUnderscore = "5-4-3-2-1- we have ____-___!",
                 ExampleId = Guid.NewGuid(),
                 ExampleParticle = "OFF",

@@ -4368,7 +4368,7 @@ namespace Persistence.Migrations
                         new
                         {
                             ExampleId = new Guid("1163f5d9-c32a-4e43-afd0-5d53d2b067d4"),
-                            ExampleFull = "I'm too tired to cook - let's get a CARRY-OUT.",
+                            ExampleFull = "I'm too tired to cook - let's get a CARRY - OUT.",
                             ExampleFullUnderscore = "I'm too tired to cook - let's get a _____-___.",
                             ExampleParticle = "OUT",
                             ExampleVerb = "CARRY",
@@ -9043,7 +9043,7 @@ namespace Persistence.Migrations
                         new
                         {
                             ExampleId = new Guid("01b590e4-157a-480d-b464-ac77210afcc9"),
-                            ExampleFull = "He was killed in a DRIVE-BY shooting.",
+                            ExampleFull = "He was killed in a DRIVE - BY shooting.",
                             ExampleFullUnderscore = "He was killed in a _____-__ shooting.",
                             ExampleParticle = "BY",
                             ExampleVerb = "DRIVE",
@@ -15489,9 +15489,9 @@ namespace Persistence.Migrations
                         new
                         {
                             ExampleId = new Guid("4f351d85-74c8-439e-b369-c3e9ac18fe36"),
-                            ExampleFull = "He WENT ON and ON talking and I was so bored.",
+                            ExampleFull = "He WENT ON talking and I was so bored.",
                             ExampleFullUnderscore = "He ____ __ talking and I was so bored.",
-                            ExampleParticle = "ON ON",
+                            ExampleParticle = "ON",
                             ExampleVerb = "WENT",
                             Meaning = "Continue.",
                             Verb = "Go",
@@ -20076,7 +20076,7 @@ namespace Persistence.Migrations
                         new
                         {
                             ExampleId = new Guid("63a77fec-c5aa-4ca9-8453-279ec090039c"),
-                            ExampleFull = "5-4-3-2-1- we have LIFT-OFF!",
+                            ExampleFull = "5-4-3-2-1- we have LIFT - OFF!",
                             ExampleFullUnderscore = "5-4-3-2-1- we have ____-___!",
                             ExampleParticle = "OFF",
                             ExampleVerb = "LIFT",

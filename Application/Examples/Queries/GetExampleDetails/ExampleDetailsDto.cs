@@ -14,7 +14,7 @@ public class ExampleDetailsDto : IMapWith<Example>
     public string Meaning { get; set; } = string.Empty;
     public string Verb { get; set; } = string.Empty;
     public string VerbAndParticle { get; set; } = string.Empty;
-    
+
     public void Mapping(Profile profile)
     {
         profile.CreateMap<Example, ExampleDetailsDto>().ReverseMap();
