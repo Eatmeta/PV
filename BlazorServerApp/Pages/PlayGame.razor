@@ -1,60 +1,59 @@
 ﻿@page "/playgame"
 @inherits PlayGameBase
-@attribute [Authorize]
 
 @if (ErrorMessage != null)
 {
     <DisplayError ErrorMessage="@ErrorMessage"></DisplayError>
 }
 
-<EditForm Model="inputLetters" OnValidSubmit="CheckExample">
+<div class="parent-element d-flex justify-content-center align-items-center vh-60">
+    <div class="child-element">
+        <div class="sentence">
+            @Example.ExampleFull
+            <br/>
+            @{
+                var counter = 0;
 
-    <div class="form-group">
-        <label for="name">Поле-помощник</label>
-        <input id="name"@ref="@invisibleInput">
-    </div>
-
-    <br/>
-    <button type="submit" class="btn btn-primary">Check</button>
-</EditForm>
-
-<br/>
-@result
-<br/>
-@Answer
-<br/>
-@Example.ExampleFull
-<br/>
-
-<div class="zzz" style="font-size: 2.5rem">
-    @Example.ExampleFull
-    <br/>
-    @{
-        var counter = 0;
-
-        @for (var j = 0; j < SentenceList.Count; j++)
-        {
-            @SentenceList[j]
-
-            if (j < AnswerList.Count)
-            {
-                <text>&nbsp;</text>
-                @foreach (var i in Enumerable.Range(0, AnswerList[j].Length))
+                @for (var j = 0; j < SentenceList.Count; j++)
                 {
-                    var local = counter + i;
-                    <input type="text"
-                           class="xxx"
-                           maxlength="1"
-                           display="inline-block"
-                           max-width="1ch"
-                           @bind="inputLetters[local]"
-                           @ref="inputRefs[local]"
-                           @onkeydown="e => { HandleKeyDown(local, e); }"
-                           @oninput="e => { HandleInput(local, e); }"
-                           @onfocusin="() => HandleFocusIn(local)">
+                    @SentenceList[j]
+
+                    if (j < AnswerList.Count)
+                    {
+                        <text>&nbsp;</text>
+                        @foreach (var i in Enumerable.Range(0, AnswerList[j].Length))
+                        {
+                            var local = counter + i;
+                            <input type="text"
+                                   style="@BorderColors[local]"
+                                   class="xxx"
+                                   maxlength="1"
+                                   display="inline-block"
+                                   max-width="1ch"
+                                   @bind="EnteredLetters[local]"
+                                   @ref="InputRefs[local]"
+                                   @onkeydown="e => { HandleKeyDown(local, e); }"
+                                   @oninput="e => { HandleInput(local, e); }"
+                                   @onfocusin="() => HandleFocusIn(local)">
+                        }
+                        counter += AnswerList[j].Length;
+                    }
                 }
-                counter += AnswerList[j].Length;
             }
-        }
-    }
+        </div>
+
+        <br/>
+        <EditForm Model="EnteredLetters" OnValidSubmit="CheckAnswer">
+            <div>
+                <input type="hidden" @ref="@InvisibleInput">
+            </div>
+            <div class="text-center">
+                <button class="button-85" role="button" type="submit">@CheckButtonTitle</button>
+                <text>&nbsp;</text>
+                <button class="button-85" role="button" type="button" @onclick="() => ShowVerbNextLetter()">Show verb's next letter</button>
+                <text>&nbsp;</text>
+                <button class="button-85" role="button" type="button" @onclick="() => ShowParticle()">Show particle</button>
+            </div>
+        </EditForm>
+    </div>
 </div>
