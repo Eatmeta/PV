@@ -81,9 +81,10 @@ a, .btn-link {
 }
 
 .xxx {
+    margin: 1px;
+    text-transform: uppercase;
     max-width: 2ch;
     display: inline-block;
-    /*padding: 0.375rem 0.75rem;*/
     text-align: center;
     font-size: 2rem;
     font-weight: 400;
