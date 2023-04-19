@@ -12,7 +12,7 @@ builder.Configuration
 
 builder.Services.AddScoped<IExampleDetailsService, ExampleDetailsService>();
 
-/*builder.Services.AddAuthentication(authenticationOptions =>
+builder.Services.AddAuthentication(authenticationOptions =>
     {
         authenticationOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         authenticationOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
@@ -28,7 +28,7 @@ builder.Services.AddScoped<IExampleDetailsService, ExampleDetailsService>();
         openIdConnectOptions.Scope.Add("https://www.example.com/api");
         openIdConnectOptions.SaveTokens = true;
     });
-builder.Services.AddAuthorization();*/
+builder.Services.AddAuthorization();
 
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
@@ -54,9 +54,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-/*app.UseAuthentication();
+app.UseAuthentication();
 
-app.UseAuthorization();*/
+app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

@@ -14097,10 +14097,10 @@ public class DbInitializer
             });
             example.HasData(new Example
             {
-                ExampleFull = "In this issue of the magazine, they are GIVING AWAY a free DVD.",
+                ExampleFull = "In this issue of the magazine, they are GIVING AWAY a free dvd.",
                 ExampleFullUnderscore = "In this issue of the magazine, they are ______ ____ a free dvd.",
                 ExampleId = Guid.NewGuid(),
-                ExampleParticle = "AWAY DVD",
+                ExampleParticle = "AWAY",
                 ExampleVerb = "GIVING",
                 Meaning = "Distribute something for free.",
                 Verb = "Give",

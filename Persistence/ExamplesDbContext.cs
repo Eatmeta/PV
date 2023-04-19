@@ -17,6 +17,6 @@ public class ExamplesDbContext : DbContext, IExamplesDbContext
     {
         builder.ApplyConfiguration(new ExampleConfiguration());
         base.OnModelCreating(builder);
-        //new DbInitializer(builder).Seed();
+        new DbInitializer(builder).Seed();
     }
 }

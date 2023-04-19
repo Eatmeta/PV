@@ -1,9 +1,13 @@
-﻿using Application.Examples.Queries.GetExampleDetails;
+﻿using System.Security.Claims;
+using Application.Examples.Queries.GetExampleDetails;
 using BlazorServerApp.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 
 namespace BlazorServerApp.Pages;
 
@@ -13,15 +17,23 @@ public class PlayGameBase : ComponentBase
     public List<string> AnswerList { get; set; } = new();
     public string[] AnswerLetterArray { get; set; }
     public List<string> SentenceList { get; set; } = new();
-    public string CheckButtonTitle = "Check";
     public ElementReference[] InputRefs;
     public string[] EnteredLetters = Array.Empty<string>();
     public ElementReference InvisibleInput;
     [Inject] public IExampleDetailsService ExampleDetailsService { get; set; }
     public List<string> BorderColors { get; set; } = new();
-
+    public int AttemptsLeft = 3;
     public string ErrorMessage { get; set; }
     [Inject] private IJSRuntime JSRuntime { get; set; }
+    public bool IsRoundOver;
+    public string CheckButtonTitle = "";
+    [Inject] private NavigationManager NavigationManager { get; set; }
+    public bool isShowVerb = true;
+    [Inject] public IHttpContextAccessor HttpContextAccessor { get; set; }
+    public string? userId;
+    public string? D;
+    public IEnumerable<Claim>? E;
+    public string? X;
 
     public static ExampleDetailsDto? Example { get; set; } = new ExampleDetailsDto
     {
@@ -37,9 +49,11 @@ public class PlayGameBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        await InitializeUser();
+        CheckButtonTitle = $"Check ({AttemptsLeft})";
         try
         {
-            //Example = await ExampleDetailsService.GetRandomExampleDetails();
+            Example = await ExampleDetailsService.GetRandomExampleDetails();
         }
         catch (Exception ex)
         {
@@ -47,6 +61,33 @@ public class PlayGameBase : ComponentBase
             ErrorMessage = ex.Message;
         }
         ParseDto();
+
+        if (isShowVerb)
+        {
+            for (var i = 0; i < AnswerList[0].Length; i++)
+            {
+                EnteredLetters[i] = AnswerList[0][i].ToString();
+            }
+        }
+    }
+
+    private async Task InitializeUser()
+    {
+        E = HttpContextAccessor.HttpContext?.User.Claims;
+        /*userId = HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        D = HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
+        X = JsonConvert.SerializeObject(HttpContextAccessor.HttpContext?.User.Claims, Formatting.Indented,
+            new JsonSerializerSettings() {
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            });
+        E = JsonConvert.SerializeObject(HttpContextAccessor.HttpContext?.User.Identities, Formatting.Indented,
+            new JsonSerializerSettings() {
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            });
+        E = HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.)
+        var xX = HttpContextAccessor.HttpContext?.User.Identities.First(i =>
+            i.Claims.First(c => c.Properties.First(p => p.Key == "family_name").Value));*/
+
     }
 
     private void ParseDto()
@@ -90,12 +131,16 @@ public class PlayGameBase : ComponentBase
 
     public void CheckAnswer()
     {
+        if (IsRoundOver) return;
         var enteredLetters = string.Join("", EnteredLetters);
         if (enteredLetters.Length == 0) return;
+        
+        AttemptsLeft--;
+        CheckButtonTitle = $"Check ({AttemptsLeft})";
 
         for (var i = 0; i < AnswerLetterArray.Length; i++)
         {
-            if (EnteredLetters[i] != null)
+            if (!EnteredLetters[i].IsNullOrEmpty())
             {
                 BorderColors[i] = AnswerLetterArray[i]
                     .Equals(EnteredLetters[i], StringComparison.InvariantCultureIgnoreCase)
@@ -104,10 +149,27 @@ public class PlayGameBase : ComponentBase
             }
         }
 
-        CheckButtonTitle =
-            enteredLetters.Equals(string.Join("", AnswerList), StringComparison.InvariantCultureIgnoreCase)
-                ? "Right!"
-                : "Wrong";
+        if (enteredLetters.Equals(string.Join("", AnswerList), StringComparison.InvariantCultureIgnoreCase))
+        {
+            CheckButtonTitle = "Correct! Well Done!";
+            IsRoundOver = true;
+            return;
+        }
+
+        if (AttemptsLeft == 0)
+        {
+            IsRoundOver = true;
+            /*CheckButtonTitle =
+                enteredLetters.Equals(string.Join("", AnswerList), StringComparison.InvariantCultureIgnoreCase)
+                    ? "Right!"
+                    : "Wrong";*/
+            CheckButtonTitle = "Oops. Good like next time!";
+        }
+    }
+
+    public void GoNextRound()
+    {
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
 
     public void ShowParticle()
