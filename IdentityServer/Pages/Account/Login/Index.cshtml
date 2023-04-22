@@ -31,6 +31,9 @@
                             <div class="form-group">
                                 <label asp-for="Input.Password"></label>
                                 <input type="password" class="form-control" placeholder="Password" asp-for="Input.Password" autocomplete="off">
+                                <div class="text-right">
+                                    <a asp-page="/Account/Register/Index" asp-route-returnUrl="@Model.Input.ReturnUrl">Sign up</a>
+                                </div>
                             </div>
                             
                             @if (Model.View.AllowRememberLogin)

@@ -1,0 +1,18 @@
+﻿@page
+@model IdentityServerHost.Pages.Account.RegistrationSuccess
+
+@{
+}
+
+<div class="register-success-page">
+    <div class="page-header">
+        <h1>Registration Success</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <p>The user has been registered successfully.</p>
+            <a asp-page="/Account/Login/Index" asp-route-returnUrl="@Model.ReturnUrl">Continue</a>
+        </div>
+    </div>
+</div>
