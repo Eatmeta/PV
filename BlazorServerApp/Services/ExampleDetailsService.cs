@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorServerApp.Services;
 
-//[Authorize]
+[Authorize]
 public class ExampleDetailsService : IExampleDetailsService
 {
     private IHttpClientFactory HttpClientFactory { get; }
     private IHttpContextAccessor HttpContextAccessor { get; }
-    
+
     public ExampleDetailsService(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
     {
         HttpClientFactory = httpClientFactory;
@@ -25,8 +25,9 @@ public class ExampleDetailsService : IExampleDetailsService
         try
         {
             httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", await HttpContextAccessor.HttpContext.GetTokenAsync("access_token"));
-            
+                new AuthenticationHeaderValue("Bearer",
+                    await HttpContextAccessor.HttpContext.GetTokenAsync("access_token"));
+
             var response = await httpClient.GetAsync("https://api:7001/api/Example/GetRandomExampleDetails");
 
             if (response.IsSuccessStatusCode)
@@ -38,11 +39,9 @@ public class ExampleDetailsService : IExampleDetailsService
 
                 return await response.Content.ReadFromJsonAsync<ExampleDetailsDto>();
             }
-            else 
-            { 
-                var message = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Http status code: {response.StatusCode} message: {message}");
-            }
+
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status code: {response.StatusCode} message: {message}");
         }
         catch (Exception)
         {
@@ -50,7 +49,7 @@ public class ExampleDetailsService : IExampleDetailsService
             throw;
         }
     }
-    
+
     public async Task<ExampleListDto?> GetAllExamples()
     {
         using var httpClient = HttpClientFactory.CreateClient();
@@ -58,8 +57,9 @@ public class ExampleDetailsService : IExampleDetailsService
         try
         {
             httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", await HttpContextAccessor.HttpContext.GetTokenAsync("access_token"));
-            
+                new AuthenticationHeaderValue("Bearer",
+                    await HttpContextAccessor.HttpContext.GetTokenAsync("access_token"));
+
             var response = await httpClient.GetAsync("https://api:7001/api/Example/GetListOfExamples");
 
             if (response.IsSuccessStatusCode)
@@ -71,11 +71,9 @@ public class ExampleDetailsService : IExampleDetailsService
 
                 return await response.Content.ReadFromJsonAsync<ExampleListDto>();
             }
-            else 
-            { 
-                var message = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Http status code: {response.StatusCode} message: {message}");
-            }
+
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status code: {response.StatusCode} message: {message}");
         }
         catch (Exception)
         {

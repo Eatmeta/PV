@@ -19,7 +19,10 @@ builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, dbContextO
         NpgsqlOptionsAction);
 });
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(identityOptions =>
+    {
+        identityOptions.User.RequireUniqueEmail = true;
+    })
     .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();

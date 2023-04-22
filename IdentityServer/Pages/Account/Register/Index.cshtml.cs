@@ -1,4 +1,4 @@
-using Duende.IdentityServer.Events;
+﻿using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-namespace IdentityServerHost.Pages.Login;
+namespace IdentityServerHost.Pages.Register;
 
 [SecurityHeaders]
 [AllowAnonymous]
@@ -22,7 +23,7 @@ public class Index : PageModel
     private readonly IAuthenticationSchemeProvider _schemeProvider;
     private readonly IIdentityProviderStore _identityProviderStore;
 
-    public ViewModel View { get; set; }
+    //public ViewModel View { get; set; }
 
     [BindProperty] public InputModel Input { get; set; }
 
@@ -46,12 +47,20 @@ public class Index : PageModel
     {
         await BuildModelAsync(returnUrl);
 
-        if (View.IsExternalLoginOnly)
+        /*if (View.IsExternalLoginOnly)
         {
             // we only have one option for logging in and it's an external provider
-            return RedirectToPage("/ExternalLogin/Challenge", new {scheme = View.ExternalLoginScheme, returnUrl});
+            return RedirectToPage("/ExternalLogin/Challenge", new { scheme = View.ExternalLoginScheme, returnUrl });
         }
         
+        await _userManager.CreateAsync(new ApplicationUser
+        {
+            UserName = "eat.meta2",
+            Email = "eat.meta2@example.com",
+            GivenName = "Eat2",
+            FamilyName = "Meta2"
+        }, "Pa55w0rd!");*/
+
         return Page();
     }
 
@@ -61,7 +70,7 @@ public class Index : PageModel
         var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
 
         // the user clicked the "cancel" button
-        if (Input.Button != "login")
+        if (Input.Button != "register")
         {
             if (context != null)
             {
@@ -89,13 +98,19 @@ public class Index : PageModel
 
         if (ModelState.IsValid)
         {
-            var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberLogin,
-                lockoutOnFailure: true);
+            //var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberLogin, lockoutOnFailure: true);
+            var result = await _userManager.CreateAsync(new ApplicationUser
+            {
+                UserName = Input.Username,
+                Email = Input.Email,
+                GivenName = "aaaa",
+                FamilyName = "bbb"
+            }, Input.Password);
+
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByNameAsync(Input.Username);
-                await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
-                    clientId: context?.Client.ClientId));
+                /*var user = await _userManager.FindByNameAsync(Input.Username);
+                await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
 
                 if (context != null)
                 {
@@ -119,14 +134,16 @@ public class Index : PageModel
                 {
                     return Redirect("~/");
                 }
-
+                
                 // user might have clicked on a malicious link - should be logged
-                throw new Exception("invalid return URL");
-            }
+                throw new Exception("invalid return URL");*/
 
-            await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials",
+                return RedirectToPage("/Account/RegistrationSuccess", Input);
+            }
+            ModelState.AddModelError(string.Empty, string.Join(Environment.NewLine, result.Errors.Select(e => e.Description)));
+            /*await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials",
                 clientId: context?.Client.ClientId));
-            ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
+            ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);*/
         }
 
         // something went wrong, show form with error
@@ -141,7 +158,7 @@ public class Index : PageModel
             ReturnUrl = returnUrl
         };
 
-        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+        /*var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
         if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
         {
             var local = context.IdP == Duende.IdentityServer.IdentityServerConstants.LocalIdentityProvider;
@@ -156,7 +173,7 @@ public class Index : PageModel
 
             if (!local)
             {
-                View.ExternalProviders = new[] {new ViewModel.ExternalProvider {AuthenticationScheme = context.IdP}};
+                View.ExternalProviders = new[] { new ViewModel.ExternalProvider { AuthenticationScheme = context.IdP } };
             }
 
             return;
@@ -189,8 +206,7 @@ public class Index : PageModel
             allowLocal = client.EnableLocalLogin;
             if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Any())
             {
-                providers = providers.Where(provider =>
-                    client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme)).ToList();
+                providers = providers.Where(provider => client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme)).ToList();
             }
         }
 
@@ -199,6 +215,6 @@ public class Index : PageModel
             AllowRememberLogin = LoginOptions.AllowRememberLogin,
             EnableLocalLogin = allowLocal && LoginOptions.AllowLocalLogin,
             ExternalProviders = providers.ToArray()
-        };
+        };*/
     }
 }
