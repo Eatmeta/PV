@@ -2,12 +2,10 @@
 using Application.Examples.Queries.GetExampleDetails;
 using BlazorServerApp.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
 
 namespace BlazorServerApp.Pages;
 
@@ -28,12 +26,12 @@ public class PlayGameBase : ComponentBase
     public bool IsRoundOver;
     public string CheckButtonTitle = "";
     [Inject] private NavigationManager NavigationManager { get; set; }
-    public bool isShowVerb = true;
+
+    [Inject] public SessionProperties SessionProperties { get; set; }
     [Inject] public IHttpContextAccessor HttpContextAccessor { get; set; }
-    public string? userId;
-    public string? D;
-    public IEnumerable<Claim>? E;
-    public string? X;
+    [Inject] public ProtectedSessionStorage ProtectedSessionStore { get; set; }
+    public IEnumerable<Claim>? Claims;
+
 
     public static ExampleDetailsDto? Example { get; set; } = new ExampleDetailsDto
     {
@@ -50,6 +48,8 @@ public class PlayGameBase : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         await InitializeUser();
+        await InitializeSessionProperties();
+        
         CheckButtonTitle = $"Check ({AttemptsLeft})";
         try
         {
@@ -62,32 +62,33 @@ public class PlayGameBase : ComponentBase
         }
         ParseDto();
 
-        if (isShowVerb)
+        if (SessionProperties.IsShowVerb)
         {
             for (var i = 0; i < AnswerList[0].Length; i++)
             {
                 EnteredLetters[i] = AnswerList[0][i].ToString();
             }
         }
+        
+        if (SessionProperties.IsShowParticles)
+        {
+            ShowParticles();
+        }
+    }
+
+    private async Task InitializeSessionProperties()
+    {
+        var result = await ProtectedSessionStore.GetAsync<SessionProperties>("sessionProperties");
+        if (result.Success)
+        {
+            SessionProperties.IsShowVerb = result.Value.IsShowVerb;
+            SessionProperties.IsShowParticles = result.Value.IsShowParticles;
+        }
     }
 
     private async Task InitializeUser()
     {
-        E = HttpContextAccessor.HttpContext?.User.Claims;
-        /*userId = HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        D = HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
-        X = JsonConvert.SerializeObject(HttpContextAccessor.HttpContext?.User.Claims, Formatting.Indented,
-            new JsonSerializerSettings() {
-                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            });
-        E = JsonConvert.SerializeObject(HttpContextAccessor.HttpContext?.User.Identities, Formatting.Indented,
-            new JsonSerializerSettings() {
-                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            });
-        E = HttpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.)
-        var xX = HttpContextAccessor.HttpContext?.User.Identities.First(i =>
-            i.Claims.First(c => c.Properties.First(p => p.Key == "family_name").Value));*/
-
+        Claims = HttpContextAccessor.HttpContext?.User.Claims;
     }
 
     private void ParseDto()
@@ -129,12 +130,12 @@ public class PlayGameBase : ComponentBase
             AnswerLetterArray[i] = temp2[i].ToString();
     }
 
-    public void CheckAnswer()
+    public async Task CheckAnswer()
     {
         if (IsRoundOver) return;
         var enteredLetters = string.Join("", EnteredLetters);
         if (enteredLetters.Length == 0) return;
-        
+
         AttemptsLeft--;
         CheckButtonTitle = $"Check ({AttemptsLeft})";
 
@@ -172,7 +173,7 @@ public class PlayGameBase : ComponentBase
         NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
 
-    public void ShowParticle()
+    public void ShowParticles()
     {
         var startIndex = AnswerList[0].Length;
         var answer = string.Join("", AnswerList);
@@ -190,6 +191,18 @@ public class PlayGameBase : ComponentBase
                 return;
             }
         }
+    }
+
+    public async Task ChangeShowVerbChecker()
+    {
+        SessionProperties.IsShowVerb = !SessionProperties.IsShowVerb;
+        await ProtectedSessionStore.SetAsync("sessionProperties", SessionProperties);
+    }
+    
+    public async Task ChangeShowParticlesChecker()
+    {
+        SessionProperties.IsShowParticles = !SessionProperties.IsShowParticles;
+        await ProtectedSessionStore.SetAsync("sessionProperties", SessionProperties);
     }
 
     public void HandleInput(int index, ChangeEventArgs e)

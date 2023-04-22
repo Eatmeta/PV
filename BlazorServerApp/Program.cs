@@ -1,3 +1,4 @@
+using BlazorServerApp;
 using BlazorServerApp.Data;
 using BlazorServerApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -35,6 +36,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddScoped<SessionProperties>();
 builder.Services.AddSingleton<WeatherForecastService>();
 
 IdentityModelEventSource.ShowPII = true;

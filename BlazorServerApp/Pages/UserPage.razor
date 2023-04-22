@@ -1,0 +1,24 @@
+﻿@page "/userpage"
+@inherits UserPageBase
+@attribute [Authorize]
+
+@if (ErrorMessage != null)
+{
+    <DisplayError ErrorMessage="@ErrorMessage"></DisplayError>
+}
+
+<div class="parent-element d-flex justify-content-center align-items-center vh-60">
+    <div class="child-element">
+        <div class="sentence">
+
+            @foreach (var c in Claims)
+            {
+                @*<p>@c.Type : @c.Value : @string.Join(";", c.Properties.Select(x => $"{x.Key} : {x.Value}"))</p>*@
+                <p>@c.Type : @c.Value</p>
+            }
+            <br/>
+            @*@Claims.First(c => c.Type == "family_name").Value*@
+            
+        </div>
+    </div>
+</div>
