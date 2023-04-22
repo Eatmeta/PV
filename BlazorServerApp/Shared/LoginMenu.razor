@@ -1,0 +1,20 @@
+﻿<a href="@Address" target="_blank">@Title</a>
+
+@code {
+
+    public string? Title { get; set; } = "Login/Register";
+    public string? Address { get; set; } = "api";
+
+    [Inject]
+    public IHttpContextAccessor HttpContextAccessor { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if ((bool) HttpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated)
+        {
+            Title = HttpContextAccessor.HttpContext?.User.Claims.First(c => c.Type == "name").Value;
+            Address = "userpage";
+        }
+    }
+
+}

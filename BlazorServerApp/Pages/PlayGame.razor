@@ -10,16 +10,7 @@
 <div class="parent-element d-flex justify-content-center align-items-center vh-60">
     <div class="child-element">
         <div class="sentence">
-            
-            @foreach (var c in E)
-            {
-                @*<p>@c.Type : @c.Value : @string.Join(";", c.Properties.Select(x => $"{x.Key} : {x.Value}"))</p>*@
-                <p>@c.Type : @c.Value</p>
-            }
-            <br/>
-            @E.First(c=>c.Type == "family_name").Value
-            <br/>
-            @Example.Meaning
+            @Example.Meaning[..^1]:
             <br/>
             @{
                 var counter = 0;
@@ -60,19 +51,22 @@
             <div class="text-center">
                 <button class="button-85" role="button" type="submit">@CheckButtonTitle</button>
                 <text>&nbsp;</text>
-                <button class="button-85" role="button" type="button" @onclick="() => GoNextRound()">Next Round</button>
+                <button class="button-85" role="button" type="button" @onclick="async () => GoNextRound()">Next Round</button>
                 <text>&nbsp;</text>
                 <button class="button-85" role="button" type="button" @onclick="() => ShowVerbNextLetter()">Show verb's next letter</button>
                 <text>&nbsp;</text>
-                <button class="button-85" role="button" type="button" @onclick="() => ShowParticle()">Show particle</button>
+                <button class="button-85" role="button" type="button" @onclick="() => ShowParticles()">Show particle</button>
             </div>
             <br/>
-            <input type="checkbox" role="switch" checked="@isShowVerb"
-                   name="noVerb" @onchange="@(() => isShowVerb = !isShowVerb)"/>
-            <label>Don't guess verb</label>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked="@isShowVerb">
-                <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
+                <input class="form-check-input" type="checkbox" role="switch" id="showVerbChecker"
+                       checked="@SessionProperties.IsShowVerb" @onchange="() => ChangeShowVerbChecker()">
+                <label class="form-check-label" for="showVerbChecker">Auto-show verb</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="showParticlesChecker"
+                       checked="@SessionProperties.IsShowParticles" @onchange="() => ChangeShowParticlesChecker()">
+                <label class="form-check-label" for="showParticlesChecker">Auto-show particles</label>
             </div>
         </EditForm>
     </div>
