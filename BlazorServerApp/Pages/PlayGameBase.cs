@@ -35,11 +35,11 @@ public class PlayGameBase : ComponentBase
 
     public static ExampleDetailsDto? Example { get; set; } = new ExampleDetailsDto
     {
-        ExampleFull = "GET AFTER her and give her the message before she leaves the building.",
+        ExampleFull = "He WALKEDOUT ON his wife last year.",
         ExampleFullUnderscore = "___ _____ her and give her the message before she leaves the building.",
         ExampleId = Guid.NewGuid(),
-        ExampleParticle = "AFTER",
-        ExampleVerb = "GET",
+        ExampleParticle = "OUT ON",
+        ExampleVerb = "WALKED",
         Meaning = "Chase.",
         Verb = "Get",
         VerbAndParticle = "Get after"
@@ -125,7 +125,7 @@ public class PlayGameBase : ComponentBase
     private void SetAnswerLetterArray(int letterCount)
     {
         AnswerLetterArray = new string[letterCount];
-        var temp2 = Example.ExampleVerb + Example.ExampleParticle;
+        var temp2 = string.Join("", AnswerList);
         for (var i = 0; i < letterCount; i++)
             AnswerLetterArray[i] = temp2[i].ToString();
     }
@@ -237,7 +237,8 @@ public class PlayGameBase : ComponentBase
             case "ArrowRight" when index + 1 < InputRefs.Length:
                 InputRefs[index + 1].FocusAsync();
                 break;
-            case "Backspace" when string.IsNullOrEmpty(EnteredLetters[index]) && index - 1 >= 0:
+            //case "Backspace" when string.IsNullOrEmpty(EnteredLetters[index]) && index - 1 >= 0:
+            case "Backspace" when index - 1 >= 0:
                 InputRefs[index - 1].FocusAsync();
                 break;
         }

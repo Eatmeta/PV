@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BlazorServerApp.Pages;
@@ -15,7 +16,7 @@ public class ApiModel : PageModel
         HttpClientFactory = httpClientFactory;
     }
 
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnGetAsync()
     {
         using var httpClient = HttpClientFactory.CreateClient();
 
@@ -23,5 +24,7 @@ public class ApiModel : PageModel
             new AuthenticationHeaderValue("Bearer", await HttpContext.GetTokenAsync("access_token"));
         
         var dto = await httpClient.GetStringAsync("https://api:7001/api/Example/GetRandomExampleDetails");
+
+        return Redirect("~/playgame");
     }
 }

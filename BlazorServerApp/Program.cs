@@ -1,5 +1,4 @@
 using BlazorServerApp;
-using BlazorServerApp.Data;
 using BlazorServerApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -37,7 +36,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<SessionProperties>();
-builder.Services.AddSingleton<WeatherForecastService>();
 
 IdentityModelEventSource.ShowPII = true;
 
