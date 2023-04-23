@@ -33,9 +33,9 @@
                                    max-width="1ch"
                                    @bind="EnteredLetters[local]"
                                    @ref="InputRefs[local]"
+                                   @onfocusin="() => HandleFocusIn(local)"
                                    @onkeydown="e => { HandleKeyDown(local, e); }"
-                                   @oninput="e => { HandleInput(local, e); }"
-                                   @onfocusin="() => HandleFocusIn(local)">
+                                   @oninput="e => { HandleInput(local, e); }">
                         }
                         counter += AnswerList[j].Length;
                     }
@@ -51,21 +51,21 @@
             <div class="text-center">
                 <button class="button-85" role="button" type="submit">@CheckButtonTitle</button>
                 <text>&nbsp;</text>
-                <button class="button-85" role="button" type="button" @onclick="async () => GoNextRound()">Next Round</button>
+                <button class="button-85" role="button" type="button" @onclick="GoNextRound">Next Round</button>
                 <text>&nbsp;</text>
-                <button class="button-85" role="button" type="button" @onclick="() => ShowVerbNextLetter()">Show verb's next letter</button>
+                <button class="button-85" role="button" type="button" @onclick="ShowVerbNextLetter">Show verb's next letter</button>
                 <text>&nbsp;</text>
-                <button class="button-85" role="button" type="button" @onclick="() => ShowParticles()">Show particle</button>
+                <button class="button-85" role="button" type="button" @onclick="ShowParticles">Show particle</button>
             </div>
             <br/>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="showVerbChecker"
-                       checked="@SessionProperties.IsShowVerb" @onchange="() => ChangeShowVerbChecker()">
+                       checked="@SessionProperties.IsShowVerb" @onchange="ChangeShowVerbChecker">
                 <label class="form-check-label" for="showVerbChecker">Auto-show verb</label>
             </div>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="showParticlesChecker"
-                       checked="@SessionProperties.IsShowParticles" @onchange="() => ChangeShowParticlesChecker()">
+                       checked="@SessionProperties.IsShowParticles" @onchange="ChangeShowParticlesChecker">
                 <label class="form-check-label" for="showParticlesChecker">Auto-show particles</label>
             </div>
         </EditForm>
