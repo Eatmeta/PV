@@ -1,14 +1,15 @@
 ﻿using Application.Common.Mappings;
 using AutoMapper;
-using PhrasalVerb.Domain;
+using Domain.Models;
 
 namespace Application.Examples.Queries.GetExampleDetails;
 
 public class ExampleDetailsDto : IMapWith<Example>
 {
-    public Guid ExampleId { get; set; }
+    //public Guid ExampleId { get; set; }
+    public int Id { get; set; }
     public string ExampleFull { get; set; } = string.Empty;
-    public string ExampleFullUnderscore { get; set; } = string.Empty;
+    //public string ExampleFullUnderscore { get; set; } = string.Empty;
     public string ExampleVerb { get; set; } = string.Empty;
     public string ExampleParticle { get; set; } = string.Empty;
     public string Meaning { get; set; } = string.Empty;

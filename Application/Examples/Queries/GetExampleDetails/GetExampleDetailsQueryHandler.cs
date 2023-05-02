@@ -1,9 +1,9 @@
 ﻿using Application.Common.Exceptions;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PhrasalVerb.Domain;
 
 namespace Application.Examples.Queries.GetExampleDetails;
 
@@ -18,9 +18,9 @@ public class GetExampleDetailsQueryHandler : IRequestHandler<GetExampleDetailsQu
     public async Task<ExampleDetailsDto> Handle(GetExampleDetailsQuery request, CancellationToken cancellationToken)
     {
         var entity = await _dbContext.Examples
-            .FirstOrDefaultAsync(example => example.ExampleId == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(example => example.Id == request.Id, cancellationToken);
 
-        if (entity == null || entity.ExampleId != request.Id)
+        if (entity == null || entity.Id != request.Id)
             throw new NotFoundException(nameof(Example), request.Id);
 
         return _mapper.Map<ExampleDetailsDto>(entity);

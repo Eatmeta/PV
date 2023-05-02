@@ -1,13 +1,17 @@
-﻿using Application.Interfaces;
+﻿using System.Reflection;
+using Application.Interfaces;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Persistence.EntityTypeConfigurations;
-using PhrasalVerb.Domain;
 
 namespace Persistence;
 
 public class ExamplesDbContext : DbContext, IExamplesDbContext
 {
     public DbSet<Example> Examples { get; set; }
+    public DbSet<Meaning> Meanings { get; set; }
+    public DbSet<Verb> Verbs { get; set; }
+    public DbSet<PhrasalVerb> PhrasalVerbs { get; set; }
+    public DbSet<Particle> Particles { get; set; }
 
     public ExamplesDbContext(DbContextOptions<ExamplesDbContext> options) : base(options)
     {
@@ -15,8 +19,8 @@ public class ExamplesDbContext : DbContext, IExamplesDbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplyConfiguration(new ExampleConfiguration());
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(builder);
-        new DbInitializer(builder).Seed();
+        //new DbInitializer(builder).Seed();
     }
 }

@@ -2,9 +2,9 @@
 using Application.Examples.Queries.GetExampleDetails;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PhrasalVerb.Domain;
 
 namespace Application.Examples.Queries.GetRandomExampleDetails;
 

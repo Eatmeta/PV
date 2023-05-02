@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PhrasalVerb.Domain;
+﻿using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Interfaces;
 

@@ -3,9 +3,9 @@ using Application.Examples.Queries.GetExampleDetails;
 using Application.Examples.Queries.GetExampleList;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PhrasalVerb.Domain;
 
 namespace Application.Examples.Queries.GetFourRandomExampleDetails;
 
@@ -21,7 +21,7 @@ public class GetFourRandomExampleDetailsQueryHandler : IRequestHandler<GetFourRa
         CancellationToken cancellationToken)
     {
         var result = new List<ExampleDetailsDto>();
-        var usedIds = new List<Guid>();
+        var usedIds = new List<int>();
         var maxIndex = await _dbContext.Examples.CountAsync(cancellationToken);
         var random = new Random();
 
@@ -36,9 +36,9 @@ public class GetFourRandomExampleDetailsQueryHandler : IRequestHandler<GetFourRa
             
             var dto = _mapper.Map<ExampleDetailsDto>(entity);
 
-            if (usedIds.Contains(dto.ExampleId)) continue;
+            if (usedIds.Contains(dto.Id)) continue;
 
-            usedIds.Add(dto.ExampleId);
+            usedIds.Add(dto.Id);
             result.Add(dto);
         }
         return new ExampleListDto {Examples = result};

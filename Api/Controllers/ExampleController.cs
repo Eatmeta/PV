@@ -26,11 +26,11 @@ public class ExampleController : BaseController
         return Ok(dto);
     }
 
-    [HttpGet("GetExampleDetails/{id:guid}")]
+    [HttpGet("GetExampleDetails/{id:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ExampleDetailsDto>> Get(Guid id)
+    public async Task<ActionResult<ExampleDetailsDto>> Get(int id)
     {
         var query = new GetExampleDetailsQuery
         {

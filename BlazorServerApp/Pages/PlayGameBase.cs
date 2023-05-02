@@ -36,8 +36,9 @@ public class PlayGameBase : ComponentBase
     public static ExampleDetailsDto? Example { get; set; } = new ExampleDetailsDto
     {
         ExampleFull = "He WALKEDOUT ON his wife last year.",
-        ExampleFullUnderscore = "___ _____ her and give her the message before she leaves the building.",
-        ExampleId = Guid.NewGuid(),
+        //ExampleFullUnderscore = "___ _____ her and give her the message before she leaves the building.",
+        //ExampleId = Guid.NewGuid(),
+        Id = 1,
         ExampleParticle = "OUT ON",
         ExampleVerb = "WALKED",
         Meaning = "Chase.",

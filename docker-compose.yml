@@ -4,8 +4,8 @@ services:
     build:
       context: .
       dockerfile: ./Api/Dockerfile
-    depends_on:
-      - identityserver
+#    depends_on:
+#      - identityserver
     entrypoint: /bin/sh -c "update-ca-certificates && dotnet Api.dll"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -27,45 +27,45 @@ services:
       - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
-  identityserver:
-    build:
-      context: .
-      dockerfile: ./IdentityServer/Dockerfile
-    depends_on:
-      - db
-    entrypoint: /bin/sh -c "update-ca-certificates && dotnet IdentityServer.dll"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:7000
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
-      - CONNECTIONSTRINGS__IDENTITY=Server=db;Port=5432;Database=identity;User Id=postgres;Password=password;
-      - CONNECTIONSTRINGS__IDENTITYSERVER=Server=db;Port=5432;Database=identityserver;User Id=postgres;Password=password;
-    ports:
-      - "7000:7000"
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
-  blazorserver:
-    build:
-      context: .
-      dockerfile: ./BlazorServerApp/Dockerfile
-    depends_on:
-      - api
-      - identityserver
-    entrypoint: /bin/sh -c "update-ca-certificates && dotnet BlazorServerApp.dll"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:7002
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
-      - AUTHENTICATION__AUTHORITY=https://identityserver:7000
-      - AUTHENTICATION__CLIENTID=1ecb3a93-3695-4652-a83a-5a536ef3f4fd
-      - AUTHENTICATION__CLIENTSECRET=secret
-    ports:
-      - "7002:7002"
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+#  identityserver:
+#    build:
+#      context: .
+#      dockerfile: ./IdentityServer/Dockerfile
+#    depends_on:
+#      - db
+#    entrypoint: /bin/sh -c "update-ca-certificates && dotnet IdentityServer.dll"
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - ASPNETCORE_URLS=https://+:7000
+#      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+#      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+#      - CONNECTIONSTRINGS__IDENTITY=Server=db;Port=5432;Database=identity;User Id=postgres;Password=password;
+#      - CONNECTIONSTRINGS__IDENTITYSERVER=Server=db;Port=5432;Database=identityserver;User Id=postgres;Password=password;
+#    ports:
+#      - "7000:7000"
+#    volumes:
+#      - ./localhost.pfx:/https/localhost.pfx:ro
+#      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+#  blazorserver:
+#    build:
+#      context: .
+#      dockerfile: ./BlazorServerApp/Dockerfile
+#    depends_on:
+#      - api
+#      - identityserver
+#    entrypoint: /bin/sh -c "update-ca-certificates && dotnet BlazorServerApp.dll"
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - ASPNETCORE_URLS=https://+:7002
+#      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+#      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+#      - AUTHENTICATION__AUTHORITY=https://identityserver:7000
+#      - AUTHENTICATION__CLIENTID=1ecb3a93-3695-4652-a83a-5a536ef3f4fd
+#      - AUTHENTICATION__CLIENTSECRET=secret
+#    ports:
+#      - "7002:7002"
+#    volumes:
+#      - ./localhost.pfx:/https/localhost.pfx:ro
+#      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
 volumes:
   db:
