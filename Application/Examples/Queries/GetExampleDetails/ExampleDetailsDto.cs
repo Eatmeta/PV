@@ -6,15 +6,17 @@ namespace Application.Examples.Queries.GetExampleDetails;
 
 public class ExampleDetailsDto : IMapWith<Example>
 {
-    //public Guid ExampleId { get; set; }
     public int Id { get; set; }
-    public string ExampleFull { get; set; } = string.Empty;
-    //public string ExampleFullUnderscore { get; set; } = string.Empty;
+    public string Body { get; set; } = string.Empty;
+    public int VerbId { get; set; }
+    public Verb Verb { get; set; }
+    public int ParticleId { get; set; }
+    public Particle Particle { get; set; }
+    public int MeaningId { get; set; }
+    public Meaning Meaning { get; set; }
+    public int PhrasalVerbId { get; set; }
+    public PhrasalVerb PhrasalVerb { get; set; }
     public string ExampleVerb { get; set; } = string.Empty;
-    public string ExampleParticle { get; set; } = string.Empty;
-    public string Meaning { get; set; } = string.Empty;
-    public string Verb { get; set; } = string.Empty;
-    public string VerbAndParticle { get; set; } = string.Empty;
 
     public void Mapping(Profile profile)
     {

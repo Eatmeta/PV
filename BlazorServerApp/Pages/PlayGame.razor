@@ -1,73 +1,90 @@
 ﻿@page "/playgame"
 @inherits PlayGameBase
-@attribute [Authorize]
 
-@if (ErrorMessage != null)
-{
-    <DisplayError ErrorMessage="@ErrorMessage"></DisplayError>
-}
-
-<div class="parent-element d-flex justify-content-center align-items-center vh-60">
-    <div class="child-element">
-        <div class="sentence">
-            @Example.Meaning[..^1]:
-            <br/>
-            @{
-                var counter = 0;
-
-                @for (var j = 0; j < SentenceList.Count; j++)
-                {
-                    @SentenceList[j]
-
-                    if (j < AnswerList.Count)
-                    {
-                        <text>&nbsp;</text>
-                        @foreach (var i in Enumerable.Range(0, AnswerList[j].Length))
-                        {
-                            var local = counter + i;
-                            <input type="text"
-                                   style="@BorderColors[local]"
-                                   class="xxx"
-                                   maxlength="1"
-                                   display="inline-block"
-                                   max-width="1ch"
-                                   @bind="EnteredLetters[local]"
-                                   @ref="InputRefs[local]"
-                                   @onfocusin="() => HandleFocusIn(local)"
-                                   @onkeydown="e => { HandleKeyDown(local, e); }"
-                                   @oninput="e => { HandleInput(local, e); }">
-                        }
-                        counter += AnswerList[j].Length;
-                    }
-                }
-            }
+<AuthorizeView>
+    
+    <NotAuthorized>
+        <div class="parent-element d-flex justify-content-center align-items-center vh-60">
+            <div class="child-element">
+                <div class="sentence">
+                    Please login to play the game!
+                </div>
+            </div>
         </div>
+    </NotAuthorized>
+    
+    <Authorized>
+        @if (ErrorMessage != null)
+        {
+            <DisplayError ErrorMessage="@ErrorMessage"></DisplayError>
+        }
 
-        <br/>
-        <EditForm Model="EnteredLetters" OnValidSubmit="CheckAnswer">
-            <div>
-                <input type="hidden" @ref="@InvisibleInput">
+        <div class="parent-element d-flex justify-content-center align-items-center vh-60">
+            <div class="child-element">
+                <div class="sentence">
+                    @Example.Meaning.Body[..^1]:
+                    <br/>
+                    @{
+                        var counter = 0;
+
+                        @for (var j = 0; j < SentenceList.Count; j++)
+                        {
+                            @SentenceList[j]
+
+                            if (j < AnswerList.Count)
+                            {
+                                <text>&nbsp;</text>
+                                @foreach (var i in Enumerable.Range(0, AnswerList[j].Length))
+                                {
+                                    var local = counter + i;
+                                    <input type="text"
+                                           style="@BorderColors[local]"
+                                           class="xxx"
+                                           maxlength="1"
+                                           display="inline-block"
+                                           max-width="1ch"
+                                           @bind="EnteredLetters[local]"
+                                           @ref="InputRefs[local]"
+                                           @onfocusin="() => HandleFocusIn(local)"
+                                           @onkeydown="e => { HandleKeyDown(local, e); }"
+                                           @oninput="e => { HandleInput(local, e); }">
+                                }
+                                counter += AnswerList[j].Length;
+                            }
+                        }
+                    }
+                </div>
+
+                <br/>
+                <EditForm Model="EnteredLetters" OnValidSubmit="CheckAnswer">
+                    <ChildContent Context="editFormContext">
+                        <div>
+                            <input type="hidden" @ref="@InvisibleInput">
+                        </div>
+                        <div class="text-center">
+                            <button class="button-85" role="button" type="submit">@CheckButtonTitle</button>
+                            <text>&nbsp;</text>
+                            <button class="button-85" role="button" type="button" @onclick="GoNextRound">Next Round</button>
+                            <text>&nbsp;</text>
+                            <button class="button-85" role="button" type="button" @onclick="ShowVerbNextLetter">Show verb's next letter</button>
+                            <text>&nbsp;</text>
+                            <button class="button-85" role="button" type="button" @onclick="ShowParticles">Show particle</button>
+                        </div>
+                        <br/>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="showVerbChecker"
+                                   checked="@SessionProperties.IsShowVerb" @onchange="ChangeShowVerbChecker">
+                            <label class="form-check-label" for="showVerbChecker">Auto-show verb</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="showParticlesChecker"
+                                   checked="@SessionProperties.IsShowParticles" @onchange="ChangeShowParticlesChecker">
+                            <label class="form-check-label" for="showParticlesChecker">Auto-show particles</label>
+                        </div>
+                    </ChildContent>
+                </EditForm>
             </div>
-            <div class="text-center">
-                <button class="button-85" role="button" type="submit">@CheckButtonTitle</button>
-                <text>&nbsp;</text>
-                <button class="button-85" role="button" type="button" @onclick="GoNextRound">Next Round</button>
-                <text>&nbsp;</text>
-                <button class="button-85" role="button" type="button" @onclick="ShowVerbNextLetter">Show verb's next letter</button>
-                <text>&nbsp;</text>
-                <button class="button-85" role="button" type="button" @onclick="ShowParticles">Show particle</button>
-            </div>
-            <br/>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="showVerbChecker"
-                       checked="@SessionProperties.IsShowVerb" @onchange="ChangeShowVerbChecker">
-                <label class="form-check-label" for="showVerbChecker">Auto-show verb</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="showParticlesChecker"
-                       checked="@SessionProperties.IsShowParticles" @onchange="ChangeShowParticlesChecker">
-                <label class="form-check-label" for="showParticlesChecker">Auto-show particles</label>
-            </div>
-        </EditForm>
-    </div>
-</div>
+        </div>
+    </Authorized>
+    
+</AuthorizeView>

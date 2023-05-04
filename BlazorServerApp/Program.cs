@@ -1,5 +1,6 @@
 using BlazorServerApp;
 using BlazorServerApp.Services;
+using BlazorServerApp.Services.IServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Logging;
@@ -7,10 +8,16 @@ using Microsoft.IdentityModel.Logging;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
-    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: false);
+    .AddJsonFile("appsettings2.json", optional: true, reloadOnChange: false)
+    .AddJsonFile("appsettings2.Development.json", optional: true, reloadOnChange: false);
 
+Sd.ExampleApiBase = builder.Configuration["ServiceUrls:ExampleAPI"];
+
+builder.Services.AddHttpClient<IExampleDetailsService, ExampleDetailsService>();
+builder.Services.AddHttpClient<IExampleAttemptService, ExampleAttemptService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IExampleDetailsService, ExampleDetailsService>();
+builder.Services.AddScoped<IExampleAttemptService, ExampleAttemptService>();
 
 builder.Services.AddAuthentication(authenticationOptions =>
     {
@@ -36,6 +43,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<SessionProperties>();
+builder.Services.AddScoped<TokenProvider>();
 
 IdentityModelEventSource.ShowPII = true;
 

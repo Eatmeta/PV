@@ -1,11 +1,13 @@
-﻿using System.Security.Claims;
-using Application.Examples.Queries.GetExampleDetails;
-using BlazorServerApp.Services;
+﻿using Application.Examples.Queries.GetExampleDetails;
+using BlazorServerApp.Models;
+using BlazorServerApp.Services.IServices;
+using Domain.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.JSInterop;
+using Newtonsoft.Json;
 
 namespace BlazorServerApp.Pages;
 
@@ -30,35 +32,55 @@ public class PlayGameBase : ComponentBase
     [Inject] public SessionProperties SessionProperties { get; set; }
     [Inject] public IHttpContextAccessor HttpContextAccessor { get; set; }
     [Inject] public ProtectedSessionStorage ProtectedSessionStore { get; set; }
-    public IEnumerable<Claim>? Claims;
-
 
     public static ExampleDetailsDto? Example { get; set; } = new ExampleDetailsDto
     {
-        ExampleFull = "He WALKEDOUT ON his wife last year.",
-        //ExampleFullUnderscore = "___ _____ her and give her the message before she leaves the building.",
-        //ExampleId = Guid.NewGuid(),
-        Id = 1,
-        ExampleParticle = "OUT ON",
-        ExampleVerb = "WALKED",
-        Meaning = "Chase.",
-        Verb = "Get",
-        VerbAndParticle = "Get after"
+        Id = 448,
+        Body = "She thought he had always been faithful to her, but he had been CHEATING ON her ever since their wedding day (with one of the bridesmaids).",
+        VerbId = 117,
+        Verb = new Verb
+        {
+            Id = 117,
+            Body = "Cheat",
+            Productivity = 1
+        },
+        ParticleId = 3,
+        Particle = new Particle
+        {
+            Id = 3,
+            Body = "on",
+            Frequency = 1086
+        },
+        MeaningId = 423,
+        Meaning = new Meaning
+        {
+            Id = 423,
+            Body = "Leave a place angrily."
+        },
+        PhrasalVerbId = 314,
+        PhrasalVerb = new PhrasalVerb
+        {
+            Id = 314,
+            Body = "Cheat on",
+            VerbId = 690,
+            ParticleId = 4,
+            Frequency = 1
+        },
+        ExampleVerb = "CHEATING"
     };
 
     protected override async Task OnInitializedAsync()
     {
-        await InitializeUser();
         await InitializeSessionProperties();
-        
+
         CheckButtonTitle = $"Check ({AttemptsLeft})";
         try
         {
-            Example = await ExampleDetailsService.GetRandomExampleDetails();
+            var response = await ExampleDetailsService.GetRandomExampleDetails<ResponseDto>();
+            Example = JsonConvert.DeserializeObject<ExampleDetailsDto>(Convert.ToString(response.Result));
         }
         catch (Exception ex)
         {
-            Console.WriteLine("##########" + Example?.ExampleFull);
             ErrorMessage = ex.Message;
         }
         ParseDto();
@@ -70,7 +92,7 @@ public class PlayGameBase : ComponentBase
                 EnteredLetters[i] = AnswerList[0][i].ToString();
             }
         }
-        
+
         if (SessionProperties.IsShowParticles)
         {
             ShowParticles();
@@ -87,15 +109,10 @@ public class PlayGameBase : ComponentBase
         }
     }
 
-    private async Task InitializeUser()
-    {
-        Claims = HttpContextAccessor.HttpContext?.User.Claims;
-    }
-
     private void ParseDto()
     {
-        Answer = Example.ExampleVerb + " " + Example.ExampleParticle;
-        var tempAnswer = Example.ExampleFull;
+        Answer = Example.ExampleVerb + " " + Example.Particle.Body.ToUpper();
+        var tempAnswer = Example.Body;
         AnswerList = Answer.Split(" ").ToList();
 
         foreach (var item in AnswerList)
@@ -199,7 +216,7 @@ public class PlayGameBase : ComponentBase
         SessionProperties.IsShowVerb = !SessionProperties.IsShowVerb;
         await ProtectedSessionStore.SetAsync("sessionProperties", SessionProperties);
     }
-    
+
     public async Task ChangeShowParticlesChecker()
     {
         SessionProperties.IsShowParticles = !SessionProperties.IsShowParticles;

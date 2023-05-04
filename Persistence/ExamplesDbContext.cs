@@ -12,6 +12,7 @@ public class ExamplesDbContext : DbContext, IExamplesDbContext
     public DbSet<Verb> Verbs { get; set; }
     public DbSet<PhrasalVerb> PhrasalVerbs { get; set; }
     public DbSet<Particle> Particles { get; set; }
+    public DbSet<ExampleAttempt> ExampleAttempts { get; set; }
 
     public ExamplesDbContext(DbContextOptions<ExamplesDbContext> options) : base(options)
     {

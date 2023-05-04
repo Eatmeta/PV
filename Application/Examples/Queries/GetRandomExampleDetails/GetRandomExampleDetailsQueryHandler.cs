@@ -16,14 +16,19 @@ public class GetRandomExampleDetailsQueryHandler : IRequestHandler<GetRandomExam
     public GetRandomExampleDetailsQueryHandler(IExamplesDbContext dbContext, IMapper mapper)
         => (_dbContext, _mapper) = (dbContext, mapper);
 
-    public async Task<ExampleDetailsDto> Handle(GetRandomExampleDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<ExampleDetailsDto> Handle(GetRandomExampleDetailsQuery request,
+        CancellationToken cancellationToken)
     {
         var maxIndex = await _dbContext.Examples.CountAsync(cancellationToken);
         var randomId = new Random().Next(0, maxIndex);
 
         var entity = await _dbContext.Examples.Skip(randomId).Take(1)
+            .Include(example => example.Verb)
+            .Include(example => example.Particle)
+            .Include(example => example.Meaning)
+            .Include(example => example.PhrasalVerb)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
-            
+
         if (entity == null)
             throw new NotFoundException(nameof(Example), randomId);
 

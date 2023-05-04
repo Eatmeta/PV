@@ -1,84 +1,33 @@
 ﻿using System.Net.Http.Headers;
 using Application.Examples.Queries.GetExampleDetails;
 using Application.Examples.Queries.GetExampleList;
+using BlazorServerApp.Models;
+using BlazorServerApp.Services.IServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorServerApp.Services;
 
-[Authorize]
-public class ExampleDetailsService : IExampleDetailsService
+public class ExampleDetailsService : BaseService, IExampleDetailsService
 {
     private IHttpClientFactory HttpClientFactory { get; }
-    private IHttpContextAccessor HttpContextAccessor { get; }
+    private readonly TokenProvider _tokenProvider;
 
-    public ExampleDetailsService(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+    public ExampleDetailsService(IHttpClientFactory httpClientFactory, TokenProvider tokenProvider)
+        : base(httpClientFactory)
     {
         HttpClientFactory = httpClientFactory;
-        HttpContextAccessor = httpContextAccessor;
+        _tokenProvider = tokenProvider;
     }
 
-    public async Task<ExampleDetailsDto?> GetRandomExampleDetails()
+    public async Task<T> GetRandomExampleDetails<T>()
     {
-        using var httpClient = HttpClientFactory.CreateClient();
-
-        try
+        var token = _tokenProvider.AccessToken;
+        return await SendAsync<T>(new ApiRequest
         {
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer",
-                    await HttpContextAccessor.HttpContext.GetTokenAsync("access_token"));
-
-            var response = await httpClient.GetAsync("https://api:7001/api/Example/GetRandomExampleDetails");
-
-            if (response.IsSuccessStatusCode)
-            {
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                {
-                    return default;
-                }
-
-                return await response.Content.ReadFromJsonAsync<ExampleDetailsDto>();
-            }
-
-            var message = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Http status code: {response.StatusCode} message: {message}");
-        }
-        catch (Exception)
-        {
-            //Log exception
-            throw;
-        }
-    }
-
-    public async Task<ExampleListDto?> GetAllExamples()
-    {
-        using var httpClient = HttpClientFactory.CreateClient();
-
-        try
-        {
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer",
-                    await HttpContextAccessor.HttpContext.GetTokenAsync("access_token"));
-
-            var response = await httpClient.GetAsync("https://api:7001/api/Example/GetListOfExamples");
-
-            if (response.IsSuccessStatusCode)
-            {
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                {
-                    return default;
-                }
-
-                return await response.Content.ReadFromJsonAsync<ExampleListDto>();
-            }
-
-            var message = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Http status code: {response.StatusCode} message: {message}");
-        }
-        catch (Exception)
-        {
-            //Log exception
-            throw;
-        }
+            ApiType = Sd.ApiType.Get,
+            Url = Sd.ExampleApiBase + "/api/Example/GetRandomExampleDetails",
+            AccessToken = token
+        });
     }
 }
